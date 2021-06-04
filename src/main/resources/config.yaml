@@ -1,5 +1,4 @@
-id: 20
-name: Bruce
-year: 2020
-address: Gotham City
-department: Computer Science
+errorTopic: metadata-topic
+inputTopic: compacted-topic
+error-consumer-group: "metadata-consumer"
+input-consumer-group: "metadata-consumer"

@@ -15,10 +15,7 @@ import org.yaml.snakeyaml.Yaml;
 import sunlife.eclaims.poc.model.EclaimErrorObject;
 import sunlife.eclaims.poc.model.Header;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStream;
+import java.io.*;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.nio.file.Files;
@@ -31,30 +28,29 @@ import java.util.Properties;
 public class EclaimsErrorProcessor {
 
 
-
     Consumer<String, EclaimErrorObject> consumer;
     Logger logger = LoggerFactory.getLogger(EclaimsErrorProcessor.class);
 
-    private static final String childTopic = "metadata-topic";
-    private static final String parentTopic = "compacted-topic";
-    private static final String conf = "/Users/nodumosu/.confluent/java.config";
-    private static final String yamlConf = "/Users/nodumosu/workspaces/sunlife-eclaims-processor-poc/src/main/resources/config.yaml";
-    private String offset = "";
-    private String partition = "";
-    private String topic = "";
-    private String timestamp = "";
+    //
+
 
     public void consumeRecords(String configFile) {
         Properties props;
+        Map<String, Object> config;
 
+        String offset = "";
+        String partition = "";
+        String topic = "";
+        String timestamp = "";
         try {
+
             props = loadConfig(configFile);
-            consumer = new KafkaConsumer<String, EclaimErrorObject>(props);
-            consumer.subscribe(Arrays.asList(childTopic));
-            ConsumerRecords<String, EclaimErrorObject> records = consumer.poll(1000);
+            config = getYamlConfig();
+            consumer = new KafkaConsumer<>(props);
+            consumer.subscribe(Arrays.asList(config.get("childTopic").toString()));
+            ConsumerRecords<String, EclaimErrorObject> errorRecords = consumer.poll(1000);
 
-
-            for (ConsumerRecord<String, EclaimErrorObject> record : records) {
+            for (ConsumerRecord<String, EclaimErrorObject> record : errorRecords) {
                 String key = record.key();
                 // parse metadata from record.value()
                 EclaimErrorObject metadata = record.value();
@@ -78,9 +74,8 @@ public class EclaimsErrorProcessor {
                 }
                 logger.info("Consumed record with key" + key + "and value" + headers);
             }
-        } catch (IOException | URISyntaxException e) {
+        } catch (IOException | URISyntaxException  e) {
             logger.error("Consumer failed to consume due to the following: %s", e.getMessage());
-//        logger.log("error", "Consumer failed to consume due to the following:" + e.getMessage())
             e.printStackTrace();
         } finally {
             consumer.close();
@@ -128,15 +123,13 @@ public class EclaimsErrorProcessor {
             cfg.load(inputStream);
         }
 
-        Yaml yaml = new Yaml();
-        InputStream inputStream = new FileInputStream(new File(yamlConf));
-        Map<String, Object> config = yaml.load(inputStream);
-        System.out.println(config);
+        Map<String, Object> config = getYamlConfig();
+
         // consumer configs
         cfg.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, "org.apache.kafka.common.serialization.StringDeserializer");
         cfg.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, KafkaJsonDeserializer.class);
         cfg.put(KafkaJsonDeserializerConfig.JSON_VALUE_TYPE, EclaimErrorObject.class);
-        cfg.put(ConsumerConfig.GROUP_ID_CONFIG, "metadata-consumer-1");
+        cfg.put(ConsumerConfig.GROUP_ID_CONFIG, config.get("error-consumer-group"));
         cfg.put(ConsumerConfig.AUTO_OFFSET_RESET_CONFIG, "earliest");
         // producer configs
         cfg.put(ProducerConfig.ACKS_CONFIG, "1");
@@ -146,9 +139,20 @@ public class EclaimsErrorProcessor {
         return cfg;
     }
 
+    private static Map<String, Object> getYamlConfig() throws FileNotFoundException {
+        String yamlConf = new File("src/main/resources/config.yaml")
+                .getAbsolutePath();
+        Yaml yaml = new Yaml();
+        InputStream inputStream = new FileInputStream(new File(yamlConf));
+        Map<String, Object> config = yaml.load(inputStream);
+        return config;
+    }
+
     public static void main(final String[] args) throws IOException {
-       EclaimsErrorProcessor processor = new EclaimsErrorProcessor();
-        processor.consumeRecords(conf);
+        String configFile = new File("src/main/resources/bootstrap.config")
+                .getAbsolutePath();
+        EclaimsErrorProcessor processor = new EclaimsErrorProcessor();
+        processor.consumeRecords(configFile);
     }
 
 }
