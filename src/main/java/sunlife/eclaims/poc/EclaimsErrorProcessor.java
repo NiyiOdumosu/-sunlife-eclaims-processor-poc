@@ -31,7 +31,6 @@ public class EclaimsErrorProcessor {
     Logger logger = LoggerFactory.getLogger(EclaimsErrorProcessor.class);
 
 
-
     public void consumeRecords(String configFile) {
         Properties props;
         Map<String, Object> config;
