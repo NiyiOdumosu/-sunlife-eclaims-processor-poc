@@ -1,0 +1,20 @@
+{
+  "connector.class": "io.confluent.salesforce.SalesforceSObjectSinkConnector",
+  "tasks.max": "1",
+  "key.converter": "org.apache.kafka.connect.storage.StringConverter",
+  "value.converter": "io.confluent.connect.json.JsonSchemaConverter",
+  "errors.retry.timeout": "0",
+  "errors.retry.delay.max.ms": "0",
+  "errors.tolerance": "all",
+  "errors.log.enable": "true",
+  "errors.log.include.messages": "true",
+  "topics": "eclaims.salesforce",
+  "errors.deadletterqueue.topic.name": "eclaims.salesforce.dlq",
+  "errors.deadletterqueue.context.headers.enable": "true",
+  "salesforce.username": "user",
+  "salesforce.password": "password",
+  "salesforce.password.token": "*******",
+  "salesforce.consumer.key": "*****",
+  "salesforce.consumer.secret": "****************",
+  "salesforce.instance": "https://test.salesforce.com"
+}
