@@ -64,3 +64,13 @@ services:
       CONNECT_INTERNAL_VALUE_CONVERTER: org.apache.kafka.connect.json.JsonConverter
       CONNECT_PLUGIN_PATH: /usr/share/java
       CONNECT_CONNECTOR_CLIENT_CONFIG_OVERRIDE_POLICY: All
+  control-center:
+    image: confluentinc/cp-enterprise-control-center:6.1.1
+    hostname: control-center
+    container_name: control-center
+    depends_on:
+      - kafka
+      - schema-registry
+      - connect
+    ports:
+      - 9021:9021

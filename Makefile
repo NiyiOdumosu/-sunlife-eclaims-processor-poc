@@ -5,7 +5,7 @@ all: build
 
 .PHONY: build
 build: all
-	${MAVEN} clean package
+	mvn clean package
 
 .PHONY: docker-up
 docker-up: build

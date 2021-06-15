@@ -1,8 +1,4 @@
 errorTopic: metadata-topic
 inputTopic: compacted-topic
 error-consumer-group: "metadata-consumer"
-<<<<<<< HEAD
 input-consumer-group: "input-consumer"
-=======
-input-consumer-group: "metadata-consumer"
->>>>>>> 2997560cb419aeb57782e1c093c902fcd2ca2ffa

@@ -45,7 +45,7 @@ public class EclaimsErrorProcessor {
             config = getYamlConfig();
             consumer = new KafkaConsumer<>(props);
             consumer.subscribe(Arrays.asList(config.get("childTopic").toString()));
-            ConsumerRecords<String, EclaimErrorObject> errorRecords = consumer.poll(1000);
+            ConsumerRecords<String, EclaimErrorObject> errorRecords = consumer.poll(10000);
 
             for (ConsumerRecord<String, EclaimErrorObject> record : errorRecords) {
                 String key = record.key();
