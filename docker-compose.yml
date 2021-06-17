@@ -24,6 +24,8 @@ services:
       KAFKA_TRANSACTION_STATE_LOG_MIN_ISR: 1
     depends_on:
       - zookeeper
+    volumes:
+      - ./src/main/resources:/home/
   ## Kafka ecosystem
   ### Kafka Connectors
   postgres:
@@ -74,3 +76,7 @@ services:
       - connect
     ports:
       - 9021:9021
+    environment:
+      CONTROL_CENTER_BOOTSTRAP_SERVERS: PLAINTEXT://kafka:9092,PLAINTEXT://localhost:9092
+      CONTROL_CENTER_STREAMS_SECURITY_PROTOCOL: PLAINTEXT
+      CONTROL_CENTER_REPLICATION_FACTOR: 1

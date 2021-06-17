@@ -16,9 +16,9 @@ kafka-connectors:
 	curl -XPUT -H 'Content-Type:application/json' -d @docker/connector/sf-sink.json http://localhost:8083/connectors/sf_sink/config
 
 
-.PHONY: metdata-topic
-produce:
-	docker-compose exec kafka kafka-topics --create --topic metadata-topic --bootstrap-server kafka:9092 --property schema.registry.url=schema-registry:8081 --property value.schema='{"type":"object", "properties":{"topic":{"type":"string"}, {"partition":{"type":"int"}, {"offset":{"type":"int"}},  {"timestamp":{"type":"int"}, "headers": {"type":"list"}}'
+.PHONY: metadata-topic
+create:
+	docker-compose exec kafka kafka-topics --create --topic metadata-topic --bootstrap-server kafka:9092 schema.registry.url=schema-registry:8081 value.schema='{"type":"object", "properties":{"topic":{"type":"string"}, {"partition":{"type":"int"}, {"offset":{"type":"int"}},  {"timestamp":{"type":"int"}, "headers": {"type":"list"}}'
 
 .PHONY: compact-topic
 compact:
