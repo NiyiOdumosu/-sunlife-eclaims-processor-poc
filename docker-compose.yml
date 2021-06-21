@@ -30,14 +30,6 @@ services:
       - ./src/main/resources:/home/
   ## Kafka ecosystem
   ### Kafka Connectors
-  postgres:
-    image: postgres
-    environment:
-      POSTGRES_PASSWORD: example
-  adminer:
-    image: adminer
-    ports:
-      - 8080:8080
   schema-registry:
     image: confluentinc/cp-schema-registry
     ports:

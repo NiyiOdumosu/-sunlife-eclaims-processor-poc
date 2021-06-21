@@ -3,7 +3,6 @@ package sunlife.eclaims.poc;
 import io.confluent.kafka.serializers.KafkaJsonDeserializer;
 import io.confluent.kafka.serializers.KafkaJsonDeserializerConfig;
 import io.confluent.kafka.serializers.KafkaJsonSerializer;
-import io.confluent.kafka.serializers.KafkaJsonSerializerConfig;
 import org.apache.kafka.clients.consumer.*;
 import org.apache.kafka.clients.producer.KafkaProducer;
 import org.apache.kafka.clients.producer.Producer;
@@ -28,19 +27,19 @@ import java.util.*;
 public class EclaimsErrorProcessor {
 
     Consumer<String, EclaimErrorObject> consumer;
-
     Logger logger = LoggerFactory.getLogger(EclaimsErrorProcessor.class);
 
 
-    public void consumeRecords(String configFile) {
-        /**
-         * This method consumes records that failed to get produced to SalesForce through the SObject SinkConnector
-         */
+    /**
+     * This method consumes from the topic that has records which failed to get produced to SalesForce through the SObject SinkConnector.
+     * It extracts the metadata from the records and sends them to the partition and offset of the input topic for reprocessing.
+     * @param configFile
+     */
+    public void consumeFromErrorTopic(String configFile) {
         Properties props;
         Map<String, String> config;
 
         try {
-
             props = loadConfig(configFile);
             config = getYamlConfig();
             consumer = new KafkaConsumer<>(props);
@@ -49,7 +48,7 @@ public class EclaimsErrorProcessor {
             if (!errorRecords.isEmpty()) {
                 for (ConsumerRecord<String, EclaimErrorObject> record : errorRecords) {
                     String key = record.key();
-                    // parse metadata from record.value()
+                    // parse metadata from from the error record
                     EclaimErrorObject metadata = record.value();
                     String offset = "";
                     String partition = "";
@@ -67,7 +66,6 @@ public class EclaimsErrorProcessor {
                     // use metadata to consume from the parent topic
                     logger.info("Consumed record with key" + key + "and value" + headers);
                     consumeInputTopic(topic, partition, offset, props);
-
                 }
             }
 
@@ -78,6 +76,16 @@ public class EclaimsErrorProcessor {
     }
 
 
+    /**
+     * This method consumes from the compacted input topic and checks to see if the record has been compacted for that key.
+     * If the record has not been compacted, it sends that record to the producer method for compaction.
+     *
+     * @param topic
+     * @param partition
+     * @param offset
+     * @param props
+     * @throws FileNotFoundException
+     */
     public void consumeInputTopic(String topic, String partition, String offset, Properties props) throws FileNotFoundException {
         Map<String, String> config = getYamlConfig();
         props.put(ConsumerConfig.MAX_POLL_RECORDS_CONFIG, 1);
@@ -90,23 +98,30 @@ public class EclaimsErrorProcessor {
         List<TopicPartition> tps = Arrays.asList(topicPartition);
         inputConsumer.assign(tps);
         inputConsumer.seek(topicPartition, Long.parseLong(offset));
+        // if
         ConsumerRecords<String, EclaimObject> inputRecords = inputConsumer.poll(Duration.ofSeconds(5));
         if(!inputRecords.isEmpty()){
             for (ConsumerRecord<String, EclaimObject> record: inputRecords){
                 logger.info("Here is the consumer record %s", record.toString());
                 // only produce the record if the seeked offset is returned and the message is not null (not compacted)
                 if (record.offset() == Long.parseLong(offset) && !record.value().toString().isEmpty()){
-                    produceRecords(record, props, topic);
+                    produceToInputTopic(record, props, topic);
                 }
             }
         }
         else{
             logger.info("The record at offset " + offset + " has already been compacted");
         }
-
     }
 
-    public void produceRecords(ConsumerRecord<String, EclaimObject> consumeRecord, Properties config, String topic) {
+    /**
+     * This methods produces records to the compacted input topic for the specified key.
+     *
+     * @param consumeRecord
+     * @param config
+     * @param topic
+     */
+    public void produceToInputTopic(ConsumerRecord<String, EclaimObject> consumeRecord, Properties config, String topic) {
         Producer producer = new KafkaProducer<>(config);
         try {
             producer.send(new ProducerRecord<String, EclaimObject>(topic, consumeRecord.key(), consumeRecord.value()));
@@ -115,11 +130,18 @@ public class EclaimsErrorProcessor {
             logger.error("Producer failed to consume due to the following: %s", e.getMessage());
         }
         producer.flush();
-
     }
 
+    /**
+     * This method loads the configuration file of the bootstrap server.
+     *
+     * @param configFile
+     * @return
+     * @throws IOException
+     * @throws URISyntaxException
+     */
+    private static Properties loadConfig(final String configFile) throws IOException, URISyntaxException {
 
-    public static Properties loadConfig(final String configFile) throws IOException, URISyntaxException {
         if (!Files.exists(Path.of(new URI("file:///" +configFile)))) {
             throw new IOException(configFile + " not found.");
         }
@@ -144,6 +166,11 @@ public class EclaimsErrorProcessor {
         return cfg;
     }
 
+    /**
+     * This file loads key, value pairs from the yaml config.
+     * @return
+     * @throws FileNotFoundException
+     */
     private static Map<String, String> getYamlConfig() throws FileNotFoundException {
         String yamlConf = new File("src/main/resources/config.yaml")
                 .getAbsolutePath();
@@ -157,7 +184,7 @@ public class EclaimsErrorProcessor {
         String configFile = new File("src/main/resources/bootstrap.config")
                 .getAbsolutePath();
         EclaimsErrorProcessor processor = new EclaimsErrorProcessor();
-        processor.consumeRecords(configFile);
+        processor.consumeFromErrorTopic(configFile);
     }
 
 }
