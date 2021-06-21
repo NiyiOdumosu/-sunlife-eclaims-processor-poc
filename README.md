@@ -48,6 +48,7 @@ After you create the compacted topic, you need to modify the configuration setti
 
 The below diagram shows how compaction works.
 
+![alt text](https://github.com/NiyiOdumosu/sunlife-eclaims-processor-poc/blob/master/src/main/resources/log-compaction.png)
 
 The properties below should be configured to enforce compaction:
 
