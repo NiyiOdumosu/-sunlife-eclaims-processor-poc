@@ -1,4 +1,4 @@
 errorTopic: "metadata-topic"
-inputTopic: "compacted-topic"
-error-consumer-group: "metadata-consumer"
+inputTopic: "input-topic"
+error-consumer-group: "error-consumer"
 input-consumer-group: "input-consumer"

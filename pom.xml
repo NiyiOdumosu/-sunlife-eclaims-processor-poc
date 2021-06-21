@@ -74,6 +74,12 @@
             <version>2.14.0</version>
             <scope>test</scope>
         </dependency>
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-log4j12</artifactId>
+            <version>1.7.30</version>
+            <scope>test</scope>
+        </dependency>
         <!-- snake yaml-->
         <dependency>
             <groupId>org.yaml</groupId>
@@ -110,6 +116,12 @@
             <groupId>org.glassfish</groupId>
             <artifactId>javax.el</artifactId>
             <version>3.0.0</version>
+        </dependency>
+        <dependency>
+            <groupId>io.confluent</groupId>
+            <artifactId>confluent-metrics</artifactId>
+            <version>6.1.1-ce</version>
+            <scope>test</scope>
         </dependency>
     </dependencies>
 </project>

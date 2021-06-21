@@ -3,6 +3,7 @@ package sunlife.eclaims.poc;
 import io.confluent.kafka.serializers.KafkaJsonDeserializer;
 import io.confluent.kafka.serializers.KafkaJsonDeserializerConfig;
 import io.confluent.kafka.serializers.KafkaJsonSerializer;
+import io.confluent.kafka.serializers.KafkaJsonSerializerConfig;
 import org.apache.kafka.clients.consumer.*;
 import org.apache.kafka.clients.producer.KafkaProducer;
 import org.apache.kafka.clients.producer.Producer;
@@ -13,6 +14,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.yaml.snakeyaml.Yaml;
 import sunlife.eclaims.poc.model.EclaimErrorObject;
+import sunlife.eclaims.poc.model.EclaimObject;
 import sunlife.eclaims.poc.model.Header;
 
 import java.io.*;
@@ -31,59 +33,47 @@ public class EclaimsErrorProcessor {
 
 
     public void consumeRecords(String configFile) {
+        /**
+         * This method consumes records that failed to get produced to SalesForce through the SObject SinkConnector
+         */
         Properties props;
         Map<String, String> config;
-
-        String offset = "";
-        String partition = "";
-        String topic = "";
-        String timestamp = "";
 
         try {
 
             props = loadConfig(configFile);
             config = getYamlConfig();
             consumer = new KafkaConsumer<>(props);
-            Boolean assign = true;
-            if(assign) {
-                TopicPartition tp = new TopicPartition(config.get("errorTopic"), 0);
-                List<TopicPartition> tps = Arrays.asList(tp);
-                consumer.assign(tps);
-                consumer.seekToBeginning(tps);
-            }else {
-                consumer.subscribe(Arrays.asList(config.get("errorTopic")));
-            }
+            consumer.subscribe(Arrays.asList(config.get("errorTopic")));
             ConsumerRecords<String, EclaimErrorObject> errorRecords = consumer.poll(Duration.ofSeconds(5));
             if (!errorRecords.isEmpty()) {
                 for (ConsumerRecord<String, EclaimErrorObject> record : errorRecords) {
                     String key = record.key();
                     // parse metadata from record.value()
                     EclaimErrorObject metadata = record.value();
-
+                    String offset = "";
+                    String partition = "";
+                    String topic = "";
                     LinkedList<Header> headers = metadata.getHeaders();
                     for (Header header : headers) {
-                        if (header.getKey().equals("input_record_topic")) {
+                        if ("input_record_topic".equals(header.getKey())) {
                             topic = header.getStringValue();
-                        } else if (header.getKey().equals("input_record_offset")) {
+                        } else if ("input_record_offset".equals(header.getKey())) {
                             offset = header.getStringValue();
-                        } else if (header.getKey().equals("input_record_timestamp")) {
-                            timestamp = header.getStringValue();
-                        } else if (header.getKey().equals("input_record_partition")) {
+                        } else if ("input_record_partition".equals(header.getKey())) {
                             partition = header.getStringValue();
                         }
-                        // use metadata to consume from the parent topic
-                        consumeInputTopic(topic, partition, offset, props);
                     }
+                    // use metadata to consume from the parent topic
                     logger.info("Consumed record with key" + key + "and value" + headers);
+                    consumeInputTopic(topic, partition, offset, props);
+
                 }
-                consumer.commitSync();
             }
 
         } catch (IOException | URISyntaxException  e) {
             logger.error("Consumer failed to consume due to the following: %s", e.getMessage());
             e.printStackTrace();
-        } finally {
-            consumer.close();
         }
     }
 
@@ -92,32 +82,40 @@ public class EclaimsErrorProcessor {
         Map<String, String> config = getYamlConfig();
         props.put(ConsumerConfig.MAX_POLL_RECORDS_CONFIG, 1);
         props.put(ConsumerConfig.GROUP_ID_CONFIG, config.get("input-consumer-group"));
-        Consumer inputConsumer = new KafkaConsumer<String, String>(props);
+        props.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, KafkaJsonDeserializer.class);
+        props.put(KafkaJsonDeserializerConfig.JSON_VALUE_TYPE, EclaimObject.class);
+        Consumer inputConsumer = new KafkaConsumer<>(props);
 
-        inputConsumer.subscribe(Arrays.asList(topic));
-        inputConsumer.seek(new TopicPartition(topic, Integer.parseInt(partition)), Long.parseLong(offset));
-        ConsumerRecords<String, String> inputRecords = inputConsumer.poll(Duration.ofSeconds(2));
+        TopicPartition topicPartition = new TopicPartition(topic, Integer.parseInt(partition));
+        List<TopicPartition> tps = Arrays.asList(topicPartition);
+        inputConsumer.assign(tps);
+        inputConsumer.seek(topicPartition, Long.parseLong(offset));
+        ConsumerRecords<String, EclaimObject> inputRecords = inputConsumer.poll(Duration.ofSeconds(5));
         if(!inputRecords.isEmpty()){
-            for (ConsumerRecord<String, String> record: inputRecords){
+            for (ConsumerRecord<String, EclaimObject> record: inputRecords){
                 logger.info("Here is the consumer record %s", record.toString());
-                produceRecords(record, props, topic);
+                // only produce the record if the seeked offset is returned and the message is not null (not compacted)
+                if (record.offset() == Long.parseLong(offset) && !record.value().toString().isEmpty()){
+                    produceRecords(record, props, topic);
+                }
             }
         }
         else{
             logger.info("The record at offset " + offset + " has already been compacted");
         }
+
     }
 
-    public void produceRecords(ConsumerRecord<String, String> consumeRecord, Properties config, String topic) {
-        Producer<String, String> producer = new KafkaProducer<String, String>(config);
+    public void produceRecords(ConsumerRecord<String, EclaimObject> consumeRecord, Properties config, String topic) {
+        Producer producer = new KafkaProducer<>(config);
         try {
-            producer.send(new
-                    ProducerRecord<String, String>(topic, consumeRecord.key(), consumeRecord.value()));
+            producer.send(new ProducerRecord<String, EclaimObject>(topic, consumeRecord.key(), consumeRecord.value()));
+            logger.info("Produced new record to the following topic: %s", topic);
         } catch (Exception e) {
             logger.error("Producer failed to consume due to the following: %s", e.getMessage());
         }
         producer.flush();
-        producer.close();
+
     }
 
 
@@ -138,7 +136,6 @@ public class EclaimsErrorProcessor {
         cfg.put(KafkaJsonDeserializerConfig.JSON_VALUE_TYPE, EclaimErrorObject.class);
         cfg.put(ConsumerConfig.GROUP_ID_CONFIG, config.get("error-consumer-group"));
         cfg.put(ConsumerConfig.AUTO_OFFSET_RESET_CONFIG, "earliest");
-//        cfg.put(ConsumerConfig.ENABLE_AUTO_COMMIT_CONFIG, false);
         // producer configs
         cfg.put(ProducerConfig.ACKS_CONFIG, "1");
         cfg.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, "org.apache.kafka.common.serialization.StringSerializer");

@@ -5,8 +5,8 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Getter;
 import lombok.Setter;
 
-//import java.time.Instant;
 
+import java.time.Instant;
 import java.util.LinkedList;
 
 @Getter
@@ -20,7 +20,7 @@ public class EclaimErrorObject {
     @JsonProperty
     public Integer  offset;
     @JsonProperty
-    public Integer timestamp;
+    public Instant timestamp;
     @JsonProperty
     public String  timestampType;
     @JsonProperty

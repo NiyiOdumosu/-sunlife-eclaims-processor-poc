@@ -1,0 +1,70 @@
+// Error Topic Dummy Data
+
+A, { "topic": "metadata-topic", "partition": 0, "offset": 0, "timestamp": 1620919447088, "timestampType": "CREATE_TIME", "headers": [{ "key": "input_record_offset", "stringValue": "0" }, { "key": "input_record_timestamp", "stringValue": "1620916642350" },{ "key": "input_record_partition", "stringValue": "0" },{ "key": "input_record_topic", "stringValue": "input-topic" } ] }
+
+
+B, { "topic": "metadata-topic", "partition": 0, "offset": 1, "timestamp": 1620919447088, "timestampType": "CREATE_TIME", "headers": [{ "key": "input_record_offset", "stringValue": "1" }, { "key": "input_record_timestamp", "stringValue": "1620916642350" },{ "key": "input_record_partition", "stringValue": "0" },{ "key": "input_record_topic", "stringValue": "input-topic" } ] }
+
+
+C, { "topic": "metadata-topic", "partition": 0, "offset": 2, "timestamp": 1620919447088, "timestampType": "CREATE_TIME", "headers": [{ "key": "input_record_offset", "stringValue": "2" }, { "key": "input_record_timestamp", "stringValue": "1620916642350" },{ "key": "input_record_partition", "stringValue": "0" },{ "key": "input_record_topic", "stringValue": "input-topic" } ] }
+
+
+D, { "topic": "metadata-topic", "partition": 0, "offset": 3, "timestamp": 1620919447088, "timestampType": "CREATE_TIME", "headers": [{ "key": "input_record_offset", "stringValue": "3" }, { "key": "input_record_timestamp", "stringValue": "1620916642350" },{ "key": "input_record_partition", "stringValue": "0" },{ "key": "input_record_topic", "stringValue": "input-topic" } ] }
+
+E, { "topic": "metadata-topic", "partition": 0, "offset": 4, "timestamp": 1620919447088, "timestampType": "CREATE_TIME", "headers": [{ "key": "input_record_offset", "stringValue": "4" }, { "key": "input_record_timestamp", "stringValue": "1620916642350" },{ "key": "input_record_partition", "stringValue": "0" },{ "key": "input_record_topic", "stringValue": "input-topic" } ] }
+
+
+F, { "topic": "metadata-topic", "partition": 0, "offset": 5, "timestamp": 1620919447088, "timestampType": "CREATE_TIME", "headers": [{ "key": "input_record_offset", "stringValue": "5" }, { "key": "input_record_timestamp", "stringValue": "1620916642350" },{ "key": "input_record_partition", "stringValue": "0" },{ "key": "input_record_topic", "stringValue": "input-topic" } ] }
+
+G, { "topic": "metadata-topic", "partition": 0, "offset": 6, "timestamp": 1620919447088, "timestampType": "CREATE_TIME", "headers": [{ "key": "input_record_offset", "stringValue": "6" }, { "key": "input_record_timestamp", "stringValue": "1620916642350" },{ "key": "input_record_partition", "stringValue": "0" },{ "key": "input_record_topic", "stringValue": "input-topic" } ] }
+
+H, { "topic": "metadata-topic", "partition": 0, "offset": 7, "timestamp": 1620919447088, "timestampType": "CREATE_TIME", "headers": [{ "key": "input_record_offset", "stringValue": "7" }, { "key": "input_record_timestamp", "stringValue": "1620916642350" },{ "key": "input_record_partition", "stringValue": "0" },{ "key": "input_record_topic", "stringValue": "input-topic" } ] }
+
+I, { "topic": "metadata-topic", "partition": 0, "offset": 8, "timestamp": 1620919447088, "timestampType": "CREATE_TIME", "headers": [{ "key": "input_record_offset", "stringValue": "8" }, { "key": "input_record_timestamp", "stringValue": "1620916642350" },{ "key": "input_record_partition", "stringValue": "0" },{ "key": "input_record_topic", "stringValue": "input-topic" } ] }
+
+
+J, { "topic": "metadata-topic", "partition": 0, "offset": 9, "timestamp": 1620919447088, "timestampType": "CREATE_TIME", "headers": [{ "key": "input_record_offset", "stringValue": "9" }, { "key": "input_record_timestamp", "stringValue": "1620916642350" },{ "key": "input_record_partition", "stringValue": "0" },{ "key": "input_record_topic", "stringValue": "input-topic" } ] }
+
+K, { "topic": "metadata-topic", "partition": 0, "offset": 9, "timestamp": 1620919447088, "timestampType": "CREATE_TIME", "headers": [{ "key": "input_record_offset", "stringValue": "9" }, { "key": "input_record_timestamp", "stringValue": "1620916642350" },{ "key": "input_record_partition", "stringValue": "0" },{ "key": "input_record_topic", "stringValue": "input-topic" } ] }
+
+
+L, { "topic": "metadata-topic", "partition": 0, "offset": 10, "timestamp": 1620919447088, "timestampType": "CREATE_TIME", "headers": [{ "key": "input_record_offset", "stringValue": "10" }, { "key": "input_record_timestamp", "stringValue": "1620916642350" },{ "key": "input_record_partition", "stringValue": "0" },{ "key": "input_record_topic", "stringValue": "input-topic" } ] }
+
+
+M, { "topic": "metadata-topic", "partition": 0, "offset": 11, "timestamp": 1620919447088, "timestampType": "CREATE_TIME", "headers": [{ "key": "input_record_offset", "stringValue": "11" }, { "key": "input_record_timestamp", "stringValue": "1620916642350" },{ "key": "input_record_partition", "stringValue": "0" },{ "key": "input_record_topic", "stringValue": "input-topic" } ] }
+
+
+N, { "topic": "metadata-topic", "partition": 0, "offset": 12, "timestamp": 1620919447088, "timestampType": "CREATE_TIME", "headers": [{ "key": "input_record_offset", "stringValue": "12" }, { "key": "input_record_timestamp", "stringValue": "1620916642350" },{ "key": "input_record_partition", "stringValue": "0" },{ "key": "input_record_topic", "stringValue": "input-topic" } ] }
+
+
+O, { "topic": "metadata-topic", "partition": 0, "offset": 13, "timestamp": 1620919447088, "timestampType": "CREATE_TIME", "headers": [{ "key": "input_record_offset", "stringValue": "13" }, { "key": "input_record_timestamp", "stringValue": "1620916642350" },{ "key": "input_record_partition", "stringValue": "0" },{ "key": "input_record_topic", "stringValue": "input-topic" } ] }
+
+
+P, { "topic": "metadata-topic", "partition": 0, "offset": 14, "timestamp": 1620919447088, "timestampType": "CREATE_TIME", "headers": [{ "key": "input_record_offset", "stringValue": "14" }, { "key": "input_record_timestamp", "stringValue": "1620916642350" },{ "key": "input_record_partition", "stringValue": "0" },{ "key": "input_record_topic", "stringValue": "input-topic" } ] }
+
+
+Q,{ "topic": "metadata-topic", "partition": 0, "offset": 15, "timestamp": 1620919447088, "timestampType": "CREATE_TIME", "headers": [{ "key": "input_record_offset", "stringValue": "15" }, { "key": "input_record_timestamp", "stringValue": "1620916642350" },{ "key": "input_record_partition", "stringValue": "0" },{ "key": "input_record_topic", "stringValue": "input-topic" } ] }
+
+
+R, { "topic": "metadata-topic", "partition": 0, "offset": 17, "timestamp": 1620919447088, "timestampType": "CREATE_TIME", "headers": [{ "key": "input_record_offset", "stringValue": "17" }, { "key": "input_record_timestamp", "stringValue": "1620916642350" },{ "key": "input_record_partition", "stringValue": "0" },{ "key": "input_record_topic", "stringValue": "input-topic" } ] }
+
+S, { "topic": "metadata-topic", "partition": 0, "offset": 18, "timestamp": 1620919447088, "timestampType": "CREATE_TIME", "headers": [{ "key": "input_record_offset", "stringValue": "18" }, { "key": "input_record_timestamp", "stringValue": "1620916642350" },{ "key": "input_record_partition", "stringValue": "0" },{ "key": "input_record_topic", "stringValue": "input-topic" } ] }
+
+T, { "topic": "metadata-topic", "partition": 0, "offset": 19, "timestamp": 1620919447088, "timestampType": "CREATE_TIME", "headers": [{ "key": "input_record_offset", "stringValue": "19" }, { "key": "input_record_timestamp", "stringValue": "1620916642350" },{ "key": "input_record_partition", "stringValue": "0" },{ "key": "input_record_topic", "stringValue": "input-topic" } ] }
+
+
+// Input Topic Dummy Data
+
+A, { "eclaims_Eligible_c": "No", "id": "000294833000539834", "_ObjectType": "AccountContactRelation" }
+
+B, { "eclaims_Eligible_c": "No", "id": "000294833000539842", "_ObjectType": "AccountContactRelation" }
+
+C, { "eclaims_Eligible_c": "No", "id": "000294833000539836", "_ObjectType": "AccountContactRelation" }
+
+D, { "eclaims_Eligible_c": "No", "id": "000294833000539837", "_ObjectType": "AccountContactRelation" }
+
+E, { "eclaims_Eligible_c": "No", "id": "000294833000539839", "_ObjectType": "AccountContactRelation" }
+
+F, { "eclaims_Eligible_c": "No", "id": "000294833000539840", "_ObjectType": "AccountContactRelation" }
+
+G, { "eclaims_Eligible_c": "No", "id": "000294833000539841", "_ObjectType": "AccountContactRelation" }
