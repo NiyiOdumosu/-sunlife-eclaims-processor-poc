@@ -62,9 +62,9 @@ The properties below should be configured to enforce compaction:
 
 The recommended settings for these configurations to start as follows:
 
-segement.bytes = 1000
-min.cleanable.dirty.ratio=0.1
-min.compaction.lag.ms=0
-max.compaction.lag=0
+* segement.bytes = 1000
+* min.cleanable.dirty.ratio=0.1
+* min.compaction.lag.ms=0
+* max.compaction.lag=0
 
 Please note that these values are subject to change based on the use case and desired performance of the clients interacting with the compacted topic.
