@@ -41,12 +41,12 @@ produce-metadata:
 
 .PHONY: consume-metadata
 consume-metadata:
-	kafka kafka-console-consumer  --topic metadata-topic --bootstrap-server localhost:9092 --from-beginning
+	kafka-console-consumer  --topic metadata-topic --bootstrap-server localhost:9092 --from-beginning
 
 
 .PHONY: consume-compacted-topic
 consume-compacted-topic:
-	kafka kafka-console-consumer  --topic input-topic --bootstrap-server localhost:9092 --from-beginning
+	kafka-console-consumer  --topic input-topic --bootstrap-server localhost:9092 --from-beginning
 
 
 .PHONY: delete-topic

@@ -104,7 +104,7 @@ public class EclaimsErrorProcessor {
             for (ConsumerRecord<String, EclaimObject> record: inputRecords){
                 logger.info("Here is the consumer record %s", record.toString());
                 // only produce the record if the seeked offset is returned and the message is not null (not compacted)
-                if (record.offset() == Long.parseLong(offset) && !record.value().toString().isEmpty()){
+                if (record.value() != null && record.offset() == Long.parseLong(offset) && !record.value().toString().isEmpty()){
                     produceToInputTopic(record, props, topic);
                 }
             }
@@ -157,7 +157,7 @@ public class EclaimsErrorProcessor {
         cfg.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, KafkaJsonDeserializer.class);
         cfg.put(KafkaJsonDeserializerConfig.JSON_VALUE_TYPE, EclaimErrorObject.class);
         cfg.put(ConsumerConfig.GROUP_ID_CONFIG, config.get("error-consumer-group"));
-        cfg.put(ConsumerConfig.AUTO_OFFSET_RESET_CONFIG, "earliest");
+        cfg.put(ConsumerConfig.AUTO_OFFSET_RESET_CONFIG, "latest");
         // producer configs
         cfg.put(ProducerConfig.ACKS_CONFIG, "1");
         cfg.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, "org.apache.kafka.common.serialization.StringSerializer");
